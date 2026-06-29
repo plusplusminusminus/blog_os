@@ -12,27 +12,20 @@ use blog_os::println;
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
 
-    blog_os::init(); // new
+    blog_os::init();
 
-    // trigger a page fault
-    #[cfg(not(test))]
-    unsafe {
-        *(0xfeadbeef as *mut u8) = 42;
-    };
-
-    // as before
     #[cfg(test)]
     test_main();
 
     println!("It did not crash!");
-    loop {}
+    blog_os::hlt_loop();
 }
 
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    blog_os::hlt_loop();
 }
 
 #[cfg(test)]
